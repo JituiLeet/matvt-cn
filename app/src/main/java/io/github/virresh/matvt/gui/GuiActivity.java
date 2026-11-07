@@ -1,0 +1,362 @@
+package io.github.virresh.matvt.gui;
+
+import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
+import android.os.CountDownTimer;
+import android.provider.Settings;
+import android.util.Log;
+import android.view.KeyEvent;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.EditText;
+import android.widget.SeekBar;
+import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import io.github.virresh.matvt.BuildConfig;
+import io.github.virresh.matvt.R;
+import io.github.virresh.matvt.helper.AccessibilityUtils;
+import io.github.virresh.matvt.helper.AppPreferences;
+import io.github.virresh.matvt.helper.KeyDetection;
+import io.github.virresh.matvt.services.MouseEventService;
+
+public class GuiActivity extends AppCompatActivity {
+    private static final String TAG_NAME = "MATVT_SERVICE";
+
+    CountDownTimer repopulate;
+    CheckBox cb_mouse_bordered, cb_disable_bossKey, cb_behaviour_bossKey, cb_hide_toasts;
+    TextView gui_acc_perm, gui_acc_serv, gui_overlay_perm, gui_overlay_serv, gui_about;
+
+    EditText et_boss_override, et_confirm_override;
+    Button bt_saveBossKeyValue, bt_saveConfirmKeyValue;
+
+    Spinner sp_mouse_icon, sp_engine_type;
+    SeekBar dsbar_mouse_size;
+    SeekBar dsbar_scroll_speed;
+
+    MouseEventService mService;
+    private AppPreferences appPreferences;
+
+    public static final int ACTION_MANAGE_OVERLAY_PERMISSION_REQUEST_CODE = 701;
+    public static final int ACTION_ACCESSIBILITY_PERMISSION_REQUEST_CODE = 702;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        appPreferences = new AppPreferences(this);
+        mService = MouseEventService.getInstance();
+        setContentView(R.layout.activity_main_gui);
+        gui_acc_perm = findViewById(R.id.gui_acc_perm);
+        gui_acc_serv = findViewById(R.id.gui_acc_serv);
+        gui_overlay_perm = findViewById(R.id.gui_overlay_perm);
+        gui_overlay_serv = findViewById(R.id.gui_overlay_serv);
+        gui_about = findViewById(R.id.gui_about);
+
+        bt_saveBossKeyValue = findViewById(R.id.bt_saveBossKey);
+        et_boss_override = findViewById(R.id.et_boss_override);
+
+        bt_saveConfirmKeyValue = findViewById(R.id.bt_saveConfirmKey);
+        et_confirm_override = findViewById(R.id.et_confirm_override);
+
+        cb_mouse_bordered = findViewById(R.id.cb_border_window);
+        cb_hide_toasts = findViewById(R.id.cb_hide_toasts);
+        cb_disable_bossKey = findViewById(R.id.cb_disable_bossKey);
+        cb_behaviour_bossKey = findViewById(R.id.cb_behaviour_bossKey);
+
+        sp_mouse_icon = findViewById(R.id.sp_mouse_icon);
+        sp_engine_type = findViewById(R.id.sp_engine_type);
+        dsbar_mouse_size = findViewById(R.id.dsbar_mouse_size);
+        dsbar_scroll_speed = findViewById(R.id.dsbar_mouse_scspeed);
+
+        // don't like to advertise in the product, but need to mention here
+        // need to increase visibility of the open source version
+        gui_about.setText("电视鼠标 v" + BuildConfig.VERSION_NAME + "\n本项目为免费开源软件，欢迎反馈问题或参与改进：\nhttps://github.com/virresh/matvt");
+// render icon style dropdown
+        IconStyleSpinnerAdapter iconStyleSpinnerAdapter = new IconStyleSpinnerAdapter(this, R.layout.spinner_icon_text_gui, R.id.textView, IconStyleSpinnerAdapter.getResourceList());
+        sp_mouse_icon.setAdapter(iconStyleSpinnerAdapter);
+
+        // render engine type dropdown
+        ArrayAdapter<CharSequence> engineTypeAdapter = ArrayAdapter.createFromResource(this,
+                R.array.engine_types, android.R.layout.simple_spinner_item);
+        engineTypeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        sp_engine_type.setAdapter(engineTypeAdapter);
+
+        checkValues(iconStyleSpinnerAdapter, engineTypeAdapter);
+
+        bt_saveBossKeyValue.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String dat = et_boss_override.getText().toString();
+                dat = dat.replaceAll("[^0-9]", "");
+                int keyValue; if (dat.isEmpty()) keyValue = KeyEvent.KEYCODE_VOLUME_MUTE;
+                else keyValue = Integer.parseInt(dat);
+                appPreferences.setOverrideStatus(appPreferences.getBossKeyValue() != 164);
+                appPreferences.setBossKeyValue(keyValue);
+                Toast.makeText(GuiActivity.this, getString(R.string.new_boss_key_toast, keyValue), Toast.LENGTH_SHORT).show();
+                updateFromPreferences();
+            }
+        });
+
+        bt_saveConfirmKeyValue.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String dat = et_confirm_override.getText().toString();
+                dat = dat.replaceAll("[^0-9]", "");
+                int keyValue; if (dat.isEmpty()) keyValue = KeyEvent.KEYCODE_DPAD_CENTER;
+                else keyValue = Integer.parseInt(dat);
+                appPreferences.setConfirmKeyValue(keyValue);
+                Toast.makeText(GuiActivity.this, getString(R.string.new_confirm_key_toast, keyValue), Toast.LENGTH_SHORT).show();
+                updateFromPreferences();
+            }
+        });
+
+        sp_engine_type.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int pos, long id) {
+                String engineType = (String) adapterView.getItemAtPosition(pos);
+                appPreferences.setEngineType(engineType);
+                updateFromPreferences();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
+
+        sp_mouse_icon.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            // the listener is set after setting initial value to avoid echo if any
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int pos, long id) {
+                String style = iconStyleSpinnerAdapter.getItem(pos);
+                appPreferences.setMouseIconPref(iconStyleSpinnerAdapter.getItem(pos));
+                updateFromPreferences();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {}
+        });
+
+        dsbar_mouse_size.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                if (fromUser) {
+                    // do not do anything if the progress change was done programmatically
+                    appPreferences.setMouseSizePref(progress);
+                    updateFromPreferences();
+                }
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {}
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {}
+        });
+
+        dsbar_scroll_speed.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                if (fromUser) {
+                    // do not do anything if the progress change was done programmatically
+                    appPreferences.setScrollSpeed(progress);
+                    updateFromPreferences();
+                }
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {}
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {}
+        });
+
+        cb_mouse_bordered.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                appPreferences.setMouseBordered(b);
+                updateFromPreferences();
+            }
+        });
+
+        cb_hide_toasts.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean value) {
+                appPreferences.setHideToastsOptionEnabled(value);
+                updateFromPreferences();
+            }
+        });
+
+        cb_disable_bossKey.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean value) {
+                appPreferences.setBossKeyDisabled(value);
+                updateFromPreferences();
+            }
+        });
+
+        cb_behaviour_bossKey.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean value) {
+                appPreferences.setBossKeyBehaviour(value);
+                updateFromPreferences();
+            }
+        });
+
+        populateText();
+        findViewById(R.id.gui_setup_perm).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                askPermissions();
+            }
+        });
+    }
+
+    private void checkValues(IconStyleSpinnerAdapter adapter, ArrayAdapter<CharSequence> engineTypeAdapter) {
+        String val = String.valueOf(appPreferences.getBossKeyValue());
+        et_boss_override.setText(val);
+        String val2 = String.valueOf(appPreferences.getConfirmKeyValue());
+        et_confirm_override.setText(val2);
+
+        String iconStyle = appPreferences.getMouseIconPref();
+        sp_mouse_icon.setSelection(adapter.getPosition(iconStyle));
+
+        String engineType = appPreferences.getEngineType();
+        sp_engine_type.setSelection(engineTypeAdapter.getPosition(engineType));
+
+        int mouseSize = appPreferences.getMouseSizePref();
+        dsbar_mouse_size.setProgress(Math.max(Math.min(mouseSize, dsbar_mouse_size.getMax()), 0));
+
+        int scrollSpeed = appPreferences.getScrollSpeed();
+        dsbar_scroll_speed.setProgress(Math.max(Math.min(scrollSpeed, dsbar_scroll_speed.getMax()), 0));
+
+        boolean bordered = appPreferences.getMouseBordered();
+        cb_mouse_bordered.setChecked(bordered);
+
+        boolean toastVisibility = appPreferences.isHideToastOptionEnabled();
+        cb_hide_toasts.setChecked(toastVisibility);
+
+        boolean bossKeyStatus = appPreferences.isBossKeyDisabled();
+        cb_disable_bossKey.setChecked(bossKeyStatus);
+
+        boolean bossKeyBehaviour = appPreferences.isBossKeySetToToggle();
+        cb_behaviour_bossKey.setChecked(bossKeyBehaviour);
+    }
+
+    private void askPermissions() {
+        if (AccessibilityUtils.isOverlayDisabled(this)) {
+            try {
+                startActivityForResult(new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION), 
+                        ACTION_MANAGE_OVERLAY_PERMISSION_REQUEST_CODE);
+            } catch (Exception unused) {
+                Toast.makeText(this, getString(R.string.overlay_handler_missing), Toast.LENGTH_SHORT).show();
+            }
+        }
+        if (!AccessibilityUtils.isOverlayDisabled(this) && AccessibilityUtils.isAccessibilityDisabled(this)) {
+            checkAccPerms();
+        }
+    }
+
+    private void checkAccPerms() {
+        if (AccessibilityUtils.isAccessibilityDisabled(this))
+            try {
+//                startActivity(new Intent(getPackageManager().getLeanbackLaunchIntentForPackage("com.wolf.apm")).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))); HELPER APP
+                startActivityForResult(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS), 
+                        ACTION_ACCESSIBILITY_PERMISSION_REQUEST_CODE);
+            } catch (Exception exception) {
+                Toast.makeText(this, getString(R.string.accessibility_handler_missing), Toast.LENGTH_SHORT).show();
+            }
+    }
+
+    public void populateText() {
+        if (AccessibilityUtils.isOverlayDisabled(this))  gui_overlay_perm.setText(R.string.perm_overlay_denied);
+        else gui_overlay_perm.setText(R.string.perm_overlay_allowed);
+
+        if (AccessibilityUtils.isAccessibilityDisabled(this)) {
+            gui_acc_perm.setText(R.string.perm_acc_denied);
+            gui_acc_serv.setText(R.string.serv_acc_denied);
+            gui_overlay_serv.setText(R.string.serv_overlay_denied); } 
+        else gui_acc_perm.setText(R.string.perm_acc_allowed);
+
+        if (AccessibilityUtils.isAccessibilityDisabled(this) && AccessibilityUtils.isOverlayDisabled(this)) {
+            gui_acc_perm.setText(R.string.perm_acc_denied);
+            gui_acc_serv.setText(R.string.serv_acc_denied);
+            gui_overlay_perm.setText(R.string.perm_overlay_denied);
+            gui_overlay_serv.setText(R.string.serv_overlay_denied);
+        }
+
+        if (!AccessibilityUtils.isAccessibilityDisabled(this) && !AccessibilityUtils.isAccessibilityDisabled(this)) {
+            gui_acc_perm.setText(R.string.perm_acc_allowed);
+            gui_acc_serv.setText(R.string.serv_acc_allowed);
+            gui_overlay_perm.setText(R.string.perm_overlay_allowed);
+            gui_overlay_serv.setText(R.string.serv_overlay_allowed);
+            findViewById(R.id.gui_setup_perm).setVisibility(View.GONE);
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == ACTION_MANAGE_OVERLAY_PERMISSION_REQUEST_CODE)
+            if (AccessibilityUtils.isOverlayDisabled(this)) {
+                Toast.makeText(this, getString(R.string.overlay_denied), Toast.LENGTH_SHORT).show();
+            } else checkAccPerms();
+        if (requestCode == ACTION_ACCESSIBILITY_PERMISSION_REQUEST_CODE)
+            if (AccessibilityUtils.isAccessibilityDisabled(this)) {
+                Toast.makeText(this, getString(R.string.accessibility_not_running), Toast.LENGTH_SHORT).show();
+            }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        //Checking services status
+        checkServiceStatus();
+
+        if (et_boss_override != null)
+            et_boss_override.setText(appPreferences.getBossKeyValue()+"");
+        if (et_confirm_override != null)
+            et_confirm_override.setText(appPreferences.getConfirmKeyValue()+"");
+    }
+
+    private void checkServiceStatus() {
+        //checking for changed every 2 sec
+        repopulate = new CountDownTimer(2000, 2000) {
+            @Override
+            public void onTick(long l) { }
+            @Override
+            public void onFinish() {
+                populateText();
+                repopulate.start(); //restarting the timer
+            }
+        };
+        repopulate.start();
+    }
+
+    private void updateFromPreferences() {
+        // Initiate update sequence if feasible.
+        if (mService == null) {
+            mService = MouseEventService.getInstance();
+        }
+        if (mService == null) {
+            Log.i(TAG_NAME, "Accessibility service is not connected. Changes will be applied next time it's started.");
+        }
+        else{
+            mService.updatePreferences();
+        }
+    }
+
+    public void callDetect(View view) {
+        startActivity(new Intent(this, KeyDetection.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+    }
+}

@@ -1,0 +1,36 @@
+<resources>
+<string name="app_name">电视鼠标</string>
+<string name="accessibility_service_description">使用遥控器控制 Android TV 上的鼠标指针</string>
+<string name="perm_acc_allowed">无障碍权限：<font color="#FF00C853">已授予</font></string>
+<string name="perm_acc_denied">无障碍权限：<font color="#FFD50000">未授予</font></string>
+<string name="perm_overlay_allowed">悬浮窗权限：<font color="#FF00C853">已授予</font></string>
+<string name="perm_overlay_denied">悬浮窗权限：<font color="#FFD50000">未授予</font></string>
+<string name="serv_acc_allowed">无障碍服务：<font color="#FF00C853">运行中</font></string>
+<string name="serv_acc_denied">无障碍服务：<font color="#FFD50000">未运行</font></string>
+<string name="serv_overlay_allowed">悬浮窗服务：<font color="#FF00C853">运行中</font></string>
+<string name="serv_overlay_denied">悬浮窗服务：<font color="#FFD50000">未运行</font></string>
+<string name="KeyDetection_Help_BossKey">按住一个按键 3 秒后松开，即可将其设置为总控按键。\n\n总控按键可用于启用或关闭鼠标服务，以及在滚动模式和方向键模式之间切换。\n如果没有弹出确认窗口，说明该按键可能不受支持。</string>
+<string name="confirm_changes_title">确认修改</string>
+<string name="confirm_set_boss_key_message">确定将按键“%1$d”设置为新的总控按键吗？</string>
+<string name="yes">确定</string><string name="no">取消</string>
+<string name="new_boss_key_toast">新的总控按键：%1$d</string>
+<string name="new_confirm_key_toast">新的确认按键：%1$d</string>
+<string name="main_service_status">服务状态</string><string name="accessibility_permission">无障碍权限</string>
+<string name="accessibility_service">无障碍服务</string><string name="overlay_permission">悬浮窗权限</string>
+<string name="overlay_service">悬浮窗服务</string><string name="setup_permissions">设置权限</string>
+<string name="other_settings">其他设置</string><string name="mouse_size">鼠标大小（小到大）</string>
+<string name="scroll_speed">滚动速度（快到慢）</string><string name="mouse_icon">鼠标指针样式</string>
+<string name="mouse_engine">鼠标控制引擎</string><string name="bordered_window">显示窗口边框</string>
+<string name="hide_toasts">隐藏提示消息（小屏幕设备推荐）</string>
+<string name="disable_boss_key">禁用总控按键（适用于按键较多的遥控器）</string>
+<string name="boss_key_toggle">总控按键是否切换模式？（默认长按）</string>
+<string name="boss_key">总控按键</string><string name="default_164">（默认：164）</string>
+<string name="detect">检测</string><string name="save">保存</string>
+<string name="confirm_key">确认按键</string><string name="default_23">（默认：23）</string>
+<string name="key_pressed">已按下的按键</string>
+<string name="overlay_handler_missing">未找到悬浮窗权限处理程序</string>
+<string name="accessibility_handler_missing">未找到无障碍权限处理程序</string>
+<string name="overlay_denied">悬浮窗权限未授予</string>
+<string name="accessibility_not_running">无障碍服务未运行</string>
+<string-array name="mouse_style_arr"><item>深色（默认）</item><item>浅色</item></string-array>
+</resources>
