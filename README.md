@@ -1,149 +1,113 @@
-[![GitHub release (latest by date)](https://img.shields.io/github/v/release/virresh/matvt?style=for-the-badge) ![GitHub all releases](https://img.shields.io/github/downloads/virresh/matvt/total?style=for-the-badge)](https://github.com/virresh/matvt/releases/latest)    [![Gitter](https://img.shields.io/gitter/room/virresh/matvt?style=for-the-badge)](https://gitter.im/virresh/community)  [<img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" width=125 alt="Support Me on Buy Me A Coffee"/>](https://www.buymeacoffee.com/support4all) [![Website](https://img.shields.io/badge/Website-MATVT%20Website-blueviolet?style=for-the-badge)](https://virresh.github.io/projects/matvt)
+# MATVT 中文版
 
-#### Please read the After Install instructions carefully otherwise you might end up soft-bricking yourself (it's possible to recover, but why do you want to risk it, eh?)
+**通过电视遥控器直接控制的 Android TV 虚拟鼠标。**
 
-# MATVT: Mouse for Android TV Toggle (Now for flipphones as well)
+MATVT（Mouse for Android TV Toggle）是一款专为 Android TV 设计的虚拟鼠标应用。无需额外连接实体鼠标、键盘或其他设备，只需使用电视自带的遥控器，就可以在电视屏幕上移动鼠标指针、点击应用界面以及进行滑动操作。
 
-Hard to reach portions of some legacy app that you're running on your Android TV (/flipphone)?
-Feeling the need to have a touch input in your Android TV (/flipphone)?
-Or just looking for an alternative to the famous Mouse Toggle App for your TV (/flipphone)?
+本项目基于开源项目 MATVT 修改，提供简体中文界面，方便中文用户使用。
 
-MATVT solves all the above. Unfortunately, it's not on the playstore, and there are no plans to
-launch it there either. If you'd like to see it on playstore, please let me know in the issues
-tab (any support is also graciously accepted).
+## 功能介绍
 
-Official Releases (and pre-releases) can be seen at https://github.com/virresh/matvt/releases.  
-The latest stable release fit for usage on TV can be downloaded at https://github.com/virresh/matvt/releases/latest.  
+- **遥控器控制鼠标：** 使用遥控器方向键移动鼠标指针。
+- **点击操作：** 使用遥控器确认键执行鼠标点击。
+- **长按操作：** 支持长按确认键执行长按操作。
+- **滑动操作：** 使用遥控器上的彩色按键控制上下左右滑动。
+- **鼠标显示控制：** 可以快速显示或隐藏鼠标指针。
+- **鼠标外观：** 支持调整鼠标指针大小和样式。
+- **边缘穿越：** 支持鼠标指针从屏幕边缘穿越到另一侧。
+- **自定义快捷键：** 可以根据遥控器按键情况配置鼠标激活按键。
+- **滚动模式：** 支持通过遥控器进行页面滚动。
 
-## So what does this app do?
-MATVT is intended for users running Android TV / Flipphone (Android version 7+, limited functionality on Android 6 flipphone) and have a big remote with
-atleast the following:
-- DPAD (for up, down, left, right and center buttons)
-- A spare key to toggle mouse mode (we call it the BossKey)
-- <Optional> Color buttons (Red, Green, Yellow, Blue)
-- <Optional> Info button
+## 系统要求
 
-After installing this app, you'll get a mouse cursor that can move around, perform clicks and
-left / right / up / down swipes from your remote itself without any extra hardware (no need to pair
-with an android phone / laptop etc)
+- Android 7.0 或更高版本。
+- 适用于 Android TV 设备。
+- 遥控器需要具备方向键和确认键。
+- 部分功能需要遥控器提供彩色按键或其他可用按键。
 
-#### Basic Functionality
-<img src="meta/basic.gif" height="200"/>
+## 下载与安装
 
-#### Mouse Warps over borders
-<img src="meta/border_warp.gif" height="200"/>
+前往本项目的 [Releases](../../releases) 页面下载 APK 文件。
 
-#### Different Sizes and Skins
-<img src="meta/mouse_sizes.gif" height="200"/>
+下载后，将 APK 安装到 Android TV 设备即可。
 
-And a lot more functionality. See the configurations section
+## 首次使用说明
 
-## How to install?
-Download the APK from the releases section and side-load it on your TV.
-The source-code is open and available should you wish to inspect it / build it yourself / don't
-trust the release apk ;)
+**请务必按照以下顺序完成设置，否则可能导致遥控器暂时无法正常操作。**
 
-Remember there are two apks, one for Android TVs, one for Android FlipPhones. The one's without a `-phone` suffix are for flipphones, the others are for TVs.
+1. 安装并打开 MATVT。
+2. 前往电视系统设置中的特殊应用权限，允许 MATVT 显示在其他应用上层。
+3. 返回系统无障碍设置，启用 MATVT 无障碍服务。
+4. 返回 MATVT，使用遥控器上的相应按键启用鼠标。
 
-## How to use?
-- DPAD is for movement and single clicks (has long click support too, but isn't very reliable)
-- The color buttons are for swiping. RED and GREEN for up/down swipe, YELLOW and BLUE for left/right swipe
-- Info button will instantly toggle mouse visibility (so you can switch between mouse and no mouse instantly)
-- ~~Pressing back button for more than 3 seconds will disable the accessibility service completely~~ This is now removed.
-- The mouse will auto-disappear after a short while and re-appear when you press another relevant button.
-- Toggling mouse modes resets cursor position
-- The mouse warps around your TV sides, so you can roll over from the top of your TV to the bottom instantly
-- Mouse movement is momentum based, so keeping key pressed for longer will increase the movement / send multiple swipes in scroll mode
-- For remotes who don't have the above buttons, a `Boss Key` is available which can be used to toggle between mouse mode / scroll mode / dpad mode. By default this is the mute key, but can be overridden in the configuration settings. See the Youtube video linked below by TechDoctorUK for a demo of how that works.
-- You can change the cursor icon used from the companion GUI app. It also supports several useful mouse configurations, detailed in a separate section below
+如果没有先授予悬浮窗权限就启用无障碍服务，可能导致应用拦截遥控器输入，而鼠标又无法正常显示。
 
-See a demo of a modified version in action by TechDoctorUK at:
-[https://youtu.be/UC7bPw2tG4c](https://youtu.be/UC7bPw2tG4c)
+如果遇到这种情况，可以连接实体鼠标或键盘，进入系统无障碍设置并关闭 MATVT 服务，然后按照正确顺序重新设置。
 
-# Important points to know After Installing
-- Be sure to go to Special App Permissions in your settings and give permission to MATVT to draw over
-other system apps. If you don't do this step and enable the accessibility service beforehand, the app won't have
-necessary permissions to do anything and it'll keep consuming your input, so your remote will no longer work.
-If you have gotten yourself in this situation, see FAQ.
-- *AFTER* doing the above, you can go to accessibility settings and enable MATVT service.
-- Now you can press the info button and there you have your mouse
+## 如何使用
 
-# Configurations available in the APP:
-- Mouse Size
-- Mouse Scroll Speed `**`
-- Mouse Icon (two icons, light and transparent available)
-- Bordered Window (Enabling this will prevent the cursor from warping over the screen edges)
-- Disable Boss Key (If you have a full size remote, you don't need to keep a boss key. Info key and color buttons are sufficient, read how to use section for more info)
-- Will Boss Key Toggle (When remotes don't allow long pressing, this will allow people to cycle through various modes on key press in the order: Dpad -> Mouse -> Scroll -> Dpad) `*`
-- Override Activation Key (Select this to set a custom keyCode for bossKey)
-- Scrolls when mouse touches the edges (thanks to [@sweenwolf](https://github.com/sweenwolf))
-- Automatically detect boss key code (again thanks to [@sweenwolf](https://github.com/sweenwolf) !)
+| 遥控器按键 | 功能 |
+|---|---|
+| 方向键 | 移动鼠标指针 |
+| 确认键 | 鼠标左键点击 |
+| 长按确认键 | 鼠标长按 |
+| 红色按键 | 向上滑动 |
+| 绿色按键 | 向下滑动 |
+| 黄色按键 | 向左滑动 |
+| 蓝色按键 | 向右滑动 |
+| 信息键 | 显示或隐藏鼠标指针 |
+| Boss Key | 切换鼠标操作模式 |
 
-` *` Not available on FlipPhone version
-`**` Not available on FlipPhones with Android 6.
+部分遥控器没有彩色按键或信息键，可以在应用设置中配置 Boss Key。
 
-# FAQs
+实际可用按键取决于电视设备和遥控器。
 
-- **Is this tested?**
-  Yes, I have tested it on Sony Android TV. So any other Android TVs running Android 9 should work. If you've tested the official version on some other TV and it's working, please let me know, I'll create a list of TVs that are known to be working.
+## 应用设置
 
-- **I didn't follow instructions properly and have soft-bricked myself, now what?**
-  You'll need a physical mouse to go to accessibility services and disable MATVT. And this time before re-enabling it, please follow instructions and give the service proper permissions. You can also use a keyboard, but it'll be way more tedious.
+MATVT 提供以下配置选项：
 
-- **I didn't follow instructions and was not soft-bricked, why all the warnings?**
-  You should consider yourself lucky then :p. But be aware that the warnings are put there from a real experience. Though thanks to community contributions, this is probably fixed in some newer versions for most TV boxes.
+- 鼠标指针大小
+- 鼠标滚动速度
+- 鼠标指针样式
+- 是否启用边框限制
+- 是否禁用 Boss Key
+- Boss Key 操作模式
+- 自定义激活按键
+- 自动检测 Boss Key
+- 鼠标触碰屏幕边缘时自动滚动
 
-- **So, how does it work?**
-  You have the exact code in front of you, feel free to read it { It's not that bad ;) }. In a nutshell, this app uses Accessibility features provided by Android.
+不同设备及系统版本可能存在功能差异。
 
-- **I think there's something that can be improved. How to contribute?**
-  I welcome all kinds of contributions. Documentation, Code tests, Actual Hardware Testing etc etc. Please feel free to create a Pull request and remind me in a couple of weeks if I forget about it :D
-  
-- **Is there a version for Android Phones too?**
-  While I believe this shouldn't be required on most touch screen Android phones, for those stuck with a non-touch screen Android phone, support for it is on the way. There's an experimental build available. Checkout discussion at https://github.com/virresh/matvt/issues/3 for more information.  
-  
-- **Are there ADs?**
-  No, there are no ads, and there won't be any.  
-  
-- **Is there any kind of tracking information? Do you sell it for profit?**
-  No, there is no tracking information collected from the app. No telemetry nothing. 
-  
-- **How do you sustain the project?**
-  It's currently on Ad-Hoc basis. I devote my free time amongst my open source projects and maintain them. This project is not funded by anyone. It totally relies on community support. There have been generous folks (like @sweenwolf) who've contributed to the code base without any kind of compensation.
+## 常见问题
 
-- **Mouse doesn't toggle with certain keys on chromecast?**
-  Chromecast use infrared for some keys, which actually operates the TV, not the chromecast (like power, volume, mute buttons). There is a setting in chromecast to control chromecast audio instead of TV audio which should enable some of these keys, but in general the app cannot receive any IR key inputs unless your TV converts them to Android keycodes and sends it to the android operating system.  
+### 为什么鼠标无法显示？
 
+请检查是否已经授予 MATVT 悬浮窗权限，并确认无障碍服务已经启用。
 
-# Redistributing and Creating MODs  
+### 为什么启用无障碍服务后遥控器无法操作？
 
-I welcome everyone who'd like to hack on the application, but I request everyone to stick by the following
-- Please consider sending the enhancement to this project itself. I'm open to all enhancements and fixes. The whole point of making this app open source is so that folks have full access to the source code and don't have to pay anything for it.
-- Please considering pointing to the latest releases from this repository itself, unless you explicitly want folks to download an old version. This prevents more people from downloading old versions and reporting bugs that might have been fixed.
-- If you absolutely do not want to contribute back anything here, then please add a disclaimer to your distribution that it's bugs should not be reported here.
-- By no means should you think that the source code being free means you can sell it. The source code is officially licensed under GPLv3, kindly abide by it's terms of use (it requires disclosing source code).
-- If you want to make commercial application out of the project and for some reason need another license / cannot abide by terms of GPL, please file an issue to discuss.
+请检查是否按照首次使用说明的顺序授予权限。如果已经无法通过遥控器操作，可以使用实体鼠标或键盘关闭 MATVT 无障碍服务。
 
-**What would happen I don't do the above?**
-Nothing. Frankly, I don't really care how people use this code. But eventually without community support or corporate backing, open source projects like this die, and this one will die too. A time will come when no developer would want to open source their projects because it's a total loss of time and spend their time making stuff behind paywalls.
-Also keep in mind this project source has contributions from several people.
+### 为什么某些遥控器按键无法使用？
 
-# Reporting Bugs
-Please ensure to report bugs against an official release. It's hard for me to track down mods. Please try the latest official release before reporting a bug, just in case the latest version has fixed issues that you might be facing.  
+部分遥控器按键可能由电视或红外接收器直接处理，没有作为 Android 按键事件传递给应用，因此 MATVT 无法接收到这些按键。
 
-# Contributing
-All kinds of contributions are welcome. Two ways of contributing:  
-- To contribute with your skills, please feel free to create a pull request in this repository. Bug reports can be done in the issues tab, and documentation happens similar to code contributions
-- To sponsor the project, you can buy me a coffee via https://ko-fi.com/Z8Z74EEHQ and mention the specific bug / issue you're interested in. You can also use the button above.
+### 是否需要额外的鼠标或键盘？
 
-# Credits
-Thanks to EVA Facial Mouse for open sourcing their code. I've taken lots of ideas from their codebase. You can check them out at https://github.com/cmauri/eva_facial_mouse  
-Thanks to [@sweenwolf](https://github.com/sweenwolf) for making this app work on remotes with less buttons, and for the app icons, fully transparent cursor images, boss key autodetect and autoscroll on borders!    
-Thanks to [@aquirozc](https://github.com/aquirozc) for helping with scroll stability and toast message hiding.    
-Thanks to [@ariehcore](https://github.com/ariehcore) for helping with confirm key option.    
-Thanks to TechDoctorUK for making a demo video  
-Thanks to @hotcereal_twitter for providing more cursor images. [Link](https://gitter.im/virresh/community?at=6102e7b0d8381a2a839bbcfd).    
+不需要。MATVT 的主要目的就是让用户直接通过电视遥控器控制虚拟鼠标。
 
-# Disclaimer
-Please note that this project in no way, shape or form is sponsored by anybody. It's a fully independent project with generous folks contributing to it.
-It does not generate any kind of revenue. There are no ads in the app and will never be. There's no tracking code stealing information or any kind of paywall for *extra* features. It is what it is, unless of course you download a MOD. Unless the MOD is open source, there's no guarantee it'll follow the same spirit as the above. The only way to contribute is either by (A) fixing known issues / helping out with code or (B) sponsoring the project
+## 开源协议
+
+本项目基于 MATVT 原项目修改。
+
+原项目采用 GNU General Public License v3.0（GPL-3.0）开源协议。修改、分发及再发布时，请遵守相应开源协议要求。
+
+## 致谢
+
+感谢 MATVT 原作者及所有贡献者提供的开源项目和代码。
+
+原项目地址：
+
+https://github.com/virresh/matvt
+
+本项目为第三方修改版本，与原项目作者没有官方关联。
