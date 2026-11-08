@@ -1,3 +1,4 @@
+
 name: Build MATVT Chinese
 
 on:
@@ -37,10 +38,21 @@ jobs:
             sed -i '/^[[:space:]]*org\.gradle\.java\.home[[:space:]]*=/d' "$HOME/.gradle/gradle.properties"
           fi
 
+      - name: Decode release keystore
+        env:
+          SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
+        run: |
+          echo "$SIGNING_KEY" | base64 --decode > "$GITHUB_WORKSPACE/release.p12"
+          echo "RELEASE_KEYSTORE_FILE=$GITHUB_WORKSPACE/release.p12" >> "$GITHUB_ENV"
+
       - name: Grant Gradle wrapper permission
         run: chmod +x ./gradlew
 
-      - name: Build debug and release APKs
+      - name: Build debug and signed release APKs
+        env:
+          KEY_STORE_PASSWORD: ${{ secrets.KEY_STORE_PASSWORD }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+          ALIAS: ${{ secrets.ALIAS }}
         run: ./gradlew --no-daemon clean assembleDebug assembleRelease
 
       - name: Upload APK artifacts
