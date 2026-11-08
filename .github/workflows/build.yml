@@ -1,4 +1,3 @@
-
 name: Build MATVT Chinese
 
 on:
@@ -28,6 +27,15 @@ jobs:
 
       - name: Install Android SDK packages
         run: sdkmanager "platforms;android-33" "build-tools;30.0.3"
+
+      - name: Remove local Java path from Gradle configuration
+        run: |
+          find . -name gradle.properties -type f \
+            -exec sed -i '/^[[:space:]]*org\.gradle\.java\.home[[:space:]]*=/d' {} +
+
+          if [ -f "$HOME/.gradle/gradle.properties" ]; then
+            sed -i '/^[[:space:]]*org\.gradle\.java\.home[[:space:]]*=/d' "$HOME/.gradle/gradle.properties"
+          fi
 
       - name: Grant Gradle wrapper permission
         run: chmod +x ./gradlew
